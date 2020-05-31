@@ -57,13 +57,16 @@ print("\n\n\n\n\t Mochila con resultados enteros \n\n\n")
 # Resultado optimo con variables no enteras (decimales)
 problema_mochila_enteros = pulp.LpProblem('Problema_Mochila_Enteros_6.3', pulp.LpMaximize)
 
-x = pulp.LpVariable('x', lowBound=0, cat='Integer')
-y = pulp.LpVariable('y', lowBound=0, cat='Integer')
-z = pulp.LpVariable('z', lowBound=0, cat='Integer')
+costos = {'x': 11, 'y': 7, 'z': 12}
+pesos = {'x': 4, 'y': 3, 'z': 5}
 
-problema_mochila_enteros += 11 * x + 7 * y + 12 * z, 'z'
+xs = ['x', 'y', 'z']
+x_vars = pulp.LpVariable.dicts("Xs", xs, 0)
 
-problema_mochila_enteros +=  4 * x + 3 * y + 5 * z <= 10
+problema_mochila_enteros += pulp.lpSum([costos[i] * x_vars[i] for i in xs]), 'z'
+
+problema_mochila_enteros += pulp.lpSum([pesos[i] * x_vars[i] for i in xs]) <= 10
+
 
 print(problema_mochila_enteros)
 
