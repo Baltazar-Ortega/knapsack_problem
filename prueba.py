@@ -52,7 +52,7 @@ for variable in problema_mochila.variables():
 print(pulp.value(problema_mochila.objective))
 
 
-print("\n\n\n\n\t Mochila con resultados enteros \n\n\n")
+print("\n\n\n\n\t Mochila con resultados NO enteros. Se usan listas \n\n\n")
 
 # Resultado optimo con variables no enteras (decimales)
 problema_mochila_enteros = pulp.LpProblem('Problema_Mochila_Enteros_6.3', pulp.LpMaximize)
@@ -61,9 +61,9 @@ costos = {'x': 11, 'y': 7, 'z': 12}
 pesos = {'x': 4, 'y': 3, 'z': 5}
 
 xs = ['x', 'y', 'z']
-x_vars = pulp.LpVariable.dicts("Xs", xs, 0)
+x_vars = pulp.LpVariable.dicts("Xs", xs, 0) # Prefijo Xs_
 
-problema_mochila_enteros += pulp.lpSum([costos[i] * x_vars[i] for i in xs]), 'z'
+problema_mochila_enteros += pulp.lpSum([costos[i] * x_vars[i] for i in xs]), 'z'  # 11*Xs_x + 7*Xs_y + 12*Xs_z + 0
 
 problema_mochila_enteros += pulp.lpSum([pesos[i] * x_vars[i] for i in xs]) <= 10
 
@@ -72,12 +72,12 @@ print(problema_mochila_enteros)
 
 problema_mochila_enteros.solve()
 
-print(pulp.LpStatus[problema_mochila_enteros.status])
+print("Estatus: ", pulp.LpStatus[problema_mochila_enteros.status]) # Optimal
 
 for variable in problema_mochila_enteros.variables():
         print(variable.name, "=", variable.varValue)
 
-print(pulp.value(problema_mochila_enteros.objective))
+print(pulp.value(problema_mochila_enteros.objective)) # 27.5
 
 
 
