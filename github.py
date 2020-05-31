@@ -65,7 +65,7 @@ def solution():
     except Exception as e:
         redirect(URL('index'))
         return dict()
-    problem=json.loads(request.vars['problem'])    
+    problem = json.loads(request.vars['problem'])    
     if problem['probtype']=='LpMaximize':
         probtype=LpMaximize
     else:
@@ -203,12 +203,15 @@ def solution():
                         
             tree.create_node('node{no}'.format(no=p),'node{no}'.format(no=p),parent='{node}'.format(node=branch_node),
             data={'status':LpStatus[temp.status],'problem':temp,'non_int':non_int_variables,'result':Result,'new_constraint':new_constraint})
-        else:
+        
+        else: # El status NO es Optimal
             tree.create_node('node{no}'.format(no=p),'node{no}'.format(no=p),parent='{node}'.format(node=branch_node),
             data={'status':LpStatus[temp.status],'problem':temp,'non_int':non_int_variables,'result':{'obj':LpStatus[temp.status]},'new_constraint':new_constraint})
 
         p += 1
         
+        # Derecha
+
         temp = tree.get_node('{node}'.format(node=branch_node)).data['problem'].copy()
         temp += variableslist[var_index] >= up
         
