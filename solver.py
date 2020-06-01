@@ -17,6 +17,7 @@ def main():
 
     xs = ['x1', 'x2']
     x_vars = LpVariable.dicts("v", xs, 0) # v_x1, v_x2
+    print("x_vars: ", x_vars)
 
     problema += lpSum([coeficientes[i] * x_vars[i] for i in xs]), 'obj' # funcion objetivo
 
