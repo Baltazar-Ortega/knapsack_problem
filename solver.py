@@ -1,9 +1,21 @@
+#Las condiciones para que tome los valores del txt correctamente son:
+#1. Los coeficientes de las variables tienen que ir separadas con un espacio.
+#2. Si el coeficiente es un 1, no dejar espacios en blanco.
+#3. Los lados derechos del igual no deben de tener espacios en blanco.
+#4. Si el coeficiente es negativo, dejar el signo junto al coeficiente sin pasar espacio.
+
 from pulp import *
 from treelib import Node, Tree
 import math
 import random
+import re
+
 arbol = Tree()
 mejor_nodo = {}
+archivo = open("mochila.txt", "r") #Abrir el archivo para leer
+num_format = re.compile("^[\-]?[1-9]") #Expresión regular para encontrar números enteros.
+lines = [] #Lista para guardar renglones de archivo
+
 def resultado():
     print(arbol.show())
 
@@ -34,20 +46,43 @@ def resultado():
     print("\n\n\t Solucion óptima: \n")
     print("\n z* = ", int(mejor_nodo['z']))
     print("\n x1 = ", int(mejor_nodo['resultado']['v_x1']))
-    print("\n x1 = ", int(mejor_nodo['resultado']['v_x2']))
-    
+    print("\n x1 = ", int(mejor_nodo['resultado']['v_x2']))    
 
 def main():
     tipo = 'LpMaximize'
+    numbers = [] #Lista de coeficientes y costos
 
     problema = LpProblem("Ej2_Branch_and_Bound", LpMaximize)
+    
+    #Leer por renglon en el archivo
+    for line in archivo:
+        lines.append(line)
 
-    coeficientes = {'x1': 2, 'x2': 3}
+    archivo.close() 
+
+    #Función para encontrar números en cada elemento de la lista
+    for s in lines:
+        for str_aux in s.split(): #Separa las cadenas por espacios
+
+            isnumber = re.match(num_format, str_aux) #Devuelve un booleano si el número cumple con la expresión regular
+
+            if str_aux == '-x1' or str_aux == '-x2': #Esta validación también se puede realizar por una expresión regular
+                numbers.append('-1')
+
+            if str_aux == '+x1' or str_aux == '+x2':
+                numbers.append('1')
+
+            if isnumber: #Si la cadena es un número ENTERO, lo guarda
+                numbers.append(str_aux)
+
+    numbers = list(map(int, numbers)) #Transforma lista de caracteres a int
+
+    coeficientes = {'x1': numbers[0], 'x2': numbers[1]}
     # Costos de restricciones
-    costosRes1 = {'x1': -3, 'x2': 1}
-    costosRes2 = {'x1': 4, 'x2': 2}
-    costosRes3 = {'x1': 4, 'x2': -1}
-    costosRes4 = {'x1': -1, 'x2': 2}
+    costosRes1 = {'x1': numbers[2], 'x2': numbers[3]}
+    costosRes2 = {'x1': numbers[4], 'x2': numbers[5]}
+    costosRes3 = {'x1': numbers[6], 'x2': numbers[7]}
+    costosRes4 = {'x1': numbers[8], 'x2': numbers[9]}
 
     xs = ['x1', 'x2']
     x_vars = LpVariable.dicts("v", xs, 0) # v_x1, v_x2
