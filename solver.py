@@ -100,14 +100,17 @@ def main():
             
     # print("Diccionario resultado: ", resultado)
     # print("Lista de variables no enteras: ", variables_no_enteras)
-
+    
     if solucion == True:
-        print('Automaticamente entero')
+        print('El problema es automaticamente entero, ya no es necesario realizar árbol de decisión.')
         mejor_nodo['nodo'] = 'original'
         mejor_nodo['z'] = value(problema.objective)
         mejor_nodo['resultado'] = resultado
-    else:  # Se realizará arbol de decision
-        # Agregamos el root a la lista de nodos
+        print("\nSolución optima:")
+        print("Z*=", resultado["obj"])
+        print("X*=(",resultado["Xs_x1"],resultado["Xs_x2"],")")
+    else: # Agregamos el root a la lista de nodos
+        print("Se realizará árbol de decisión, ya que no es entero")
         pila_nodos.append('original')
 
     # NODO RAIZ del arbol de decision
