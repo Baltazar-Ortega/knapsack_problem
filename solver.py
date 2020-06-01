@@ -2,6 +2,40 @@ from pulp import *
 from treelib import Node, Tree
 import math
 import random
+arbol = Tree()
+mejor_nodo = {}
+def resultado():
+    print(arbol.show())
+
+    nodos_ordenados_indices = [0] # el original es 0
+    nodos_ordenados = []
+
+    for nombre in list(arbol.expand_tree(mode=Tree.DEPTH))[1:]:
+         nodos_ordenados_indices.append(int(nombre[4]))
+
+
+    for i in nodos_ordenados_indices:
+
+        for j, nodo in enumerate(arbol.all_nodes()):
+            if i == j:
+                nodos_ordenados.append(nodo)
+    
+    # print("Indices  ordenados: ", nodos_ordenados_indices)
+
+    for i, nodo in enumerate(nodos_ordenados):
+        if i == 0:
+            print("\n\n\t Problema original \n\n")
+        else:
+            print("\n\n\t Subproblema ", i, " \n\n")
+        print(nodo)
+
+    # print("Nodos ordenados: ", nodos_ordenados)
+
+    print("\n\n\t Solucion óptima: \n")
+    print("\n z* = ", int(mejor_nodo['z']))
+    print("\n x1 = ", int(mejor_nodo['resultado']['v_x1']))
+    print("\n x1 = ", int(mejor_nodo['resultado']['v_x2']))
+    
 
 def main():
     tipo = 'LpMaximize'
@@ -42,13 +76,13 @@ def main():
 
     pila_nodos = [] # nombres de los nodos (array de strings)
 
-    arbol = Tree()
+
 
     resultado = {}
     resultado['obj'] = value(problema.objective) # Valor de z*
     resultado['vars'] = {}
 
-    mejor_nodo = {} # Mejor nodo cada tiempo
+    
     mejor_nodo['nodo'] = 'none'
     mejor_nodo['z']=-float('inf') # -infinito
 
@@ -276,40 +310,11 @@ def main():
     # FIN DEL CICLO WHILE
 
 
-    print(arbol.show())
-
-    nodos_ordenados_indices = [0] # el original es 0
-    nodos_ordenados = []
-
-    for nombre in list(arbol.expand_tree(mode=Tree.DEPTH))[1:]:
-         nodos_ordenados_indices.append(int(nombre[4]))
-
-
-    for i in nodos_ordenados_indices:
-
-        for j, nodo in enumerate(arbol.all_nodes()):
-            if i == j:
-                nodos_ordenados.append(nodo)
-    
-    # print("Indices  ordenados: ", nodos_ordenados_indices)
-
-    for i, nodo in enumerate(nodos_ordenados):
-        if i == 0:
-            print("\n\n\t Problema original \n\n")
-        else:
-            print("\n\n\t Subproblema ", i, " \n\n")
-        print(nodo)
-
-    # print("Nodos ordenados: ", nodos_ordenados)
-
-    print("\n\n\t Solucion óptima: \n")
-    print("\n z* = ", int(mejor_nodo['z']))
-    print("\n x1 = ", int(mejor_nodo['resultado']['v_x1']))
-    print("\n x1 = ", int(mejor_nodo['resultado']['v_x2']))
-    
 
 
 if __name__ == '__main__':
     main()
+    resultado()
+    
 
 
