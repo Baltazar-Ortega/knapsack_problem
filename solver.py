@@ -11,7 +11,7 @@ import re
 
 arbol = Tree()
 mejor_nodo = {}
-archivo = open("mochila.txt", "r") #Abrir el archivo para leer
+archivo = open("data.txt", "r") #Abrir el archivo para leer
 num_format = re.compile("^[\-]?[1-9]") #Expresión regular para encontrar números enteros.
 lines = [] #Lista para guardar renglones de archivo
 
