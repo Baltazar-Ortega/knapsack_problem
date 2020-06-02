@@ -16,6 +16,7 @@ num_format = re.compile("^[\-]?[1-9]") #Expresión regular para encontrar númer
 lines = [] #Lista para guardar renglones de archivo
 
 def resultado():
+    o=0
     print(arbol.show())
 
     nodos_ordenados_indices = [0] # el original es 0
@@ -35,17 +36,29 @@ def resultado():
 
     for i, nodo in enumerate(nodos_ordenados):
         if i == 0:
+            print("\n\n~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
             print("\n\n\t Problema original \n\n")
+            print("~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
         else:
+            print("\n\n~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
             print("\n\n\t Subproblema ", i, " \n\n")
+            print("~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
         print(nodo)
+        print("~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
 
+    for o,nodo in enumerate(nodos_ordenados):
+        if nodo.data['resultado']['obj'] == mejor_nodo['z']:
+            num=o
     # print("Nodos ordenados: ", nodos_ordenados)
 
+    print("\n\n----------------------------------")
     print("\n\n\t Solucion óptima: \n")
+    print("\n\t Subproblema ", num,)
+    print("----------------------------------")
     print("\n z* = ", int(mejor_nodo['z']))
     print("\n x1 = ", int(mejor_nodo['resultado']['v_x1']))
-    print("\n x1 = ", int(mejor_nodo['resultado']['v_x2']))    
+    print("\n x1 = ", int(mejor_nodo['resultado']['v_x2']))
+    print("----------------------------------")    
 
 def main():
     tipo = 'LpMaximize'
