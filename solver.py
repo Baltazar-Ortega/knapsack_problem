@@ -1,8 +1,7 @@
 #Las condiciones para que tome los valores del txt correctamente son:
 #1. Los coeficientes de las variables tienen que ir separadas con un espacio.
 #2. Si el coeficiente es un 1, no dejar espacios en blanco.
-#3. Los lados derechos del igual no deben de tener espacios en blanco.
-#4. Si el coeficiente es negativo, dejar el signo junto al coeficiente sin pasar espacio.
+#3. Si el coeficiente es negativo, dejar el signo junto al coeficiente sin pasar espacio.
 
 from pulp import *
 from treelib import Node, Tree
@@ -80,19 +79,19 @@ def main():
     coeficientes = {'x1': numbers[0], 'x2': numbers[1]}
     # Costos de restricciones
     costosRes1 = {'x1': numbers[2], 'x2': numbers[3]}
-    costosRes2 = {'x1': numbers[4], 'x2': numbers[5]}
-    costosRes3 = {'x1': numbers[6], 'x2': numbers[7]}
-    costosRes4 = {'x1': numbers[8], 'x2': numbers[9]}
+    costosRes2 = {'x1': numbers[5], 'x2': numbers[6]}
+    costosRes3 = {'x1': numbers[8], 'x2': numbers[9]}
+    costosRes4 = {'x1': numbers[11], 'x2': numbers[12]}
 
     xs = ['x1', 'x2']
     x_vars = LpVariable.dicts("v", xs, 0) # v_x1, v_x2
 
     problema += lpSum([coeficientes[i] * x_vars[i] for i in xs]), 'obj' # funcion objetivo
 
-    problema += lpSum([costosRes1[i] * x_vars[i] for i in xs]) <= 1
-    problema += lpSum([costosRes2[i] * x_vars[i] for i in xs]) <= 15
-    problema += lpSum([costosRes3[i] * x_vars[i] for i in xs]) <= 10
-    problema += lpSum([costosRes4[i] * x_vars[i] for i in xs]) <= 5
+    problema += lpSum([costosRes1[i] * x_vars[i] for i in xs]) <= numbers[4]
+    problema += lpSum([costosRes2[i] * x_vars[i] for i in xs]) <= numbers[7]
+    problema += lpSum([costosRes3[i] * x_vars[i] for i in xs]) <= numbers[10]
+    problema += lpSum([costosRes4[i] * x_vars[i] for i in xs]) <= numbers[13]
 
     problema.solve()
 
