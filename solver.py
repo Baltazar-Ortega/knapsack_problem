@@ -84,7 +84,7 @@ def main():
 
     numbers = list(map(int, numbers)) #Transforma lista de caracteres a int
 
-    aux_coe = numbers[0]
+    aux_coe = numbers[0] #Toma el valor para saber cuantas variables tiene el problema
     
     i = 1 #Contador
     coeficientes = {}
@@ -104,17 +104,12 @@ def main():
         i = i + 1
         costosRes1.update({x : s})
 
-    #print(numbers[-1])
-    #print(costosRes1)
-    #kk = input()
     xs = []
-    for i in range(1, aux_coe + 1):
+    for i in range(1, aux_coe + 1): #For para guardar las xs
         x = 'x'
         aux = str(i)
         x = 'x' + aux
         xs.append(x)
-    #print(xs)
-    #kk = input()
 
     x_vars = LpVariable.dicts("v", xs, 0) # v_x1, v_x2
 
