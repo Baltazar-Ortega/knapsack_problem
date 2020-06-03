@@ -11,7 +11,7 @@ import re
 
 arbol = Tree()
 mejor_nodo = {}
-archivo = open("data.txt", "r") #Abrir el archivo para leer
+archivo = open("data2.txt", "r") #Abrir el archivo para leer
 num_format = re.compile("^[\-]?[1-9]") #Expresión regular para encontrar números enteros.
 lines = [] #Lista para guardar renglones de archivo
 
@@ -73,38 +73,54 @@ def main():
     archivo.close() 
 
     #Función para encontrar números en cada elemento de la lista
+
     for s in lines:
         for str_aux in s.split(): #Separa las cadenas por espacios
 
             isnumber = re.match(num_format, str_aux) #Devuelve un booleano si el número cumple con la expresión regular
-
-            if str_aux == '-x1' or str_aux == '-x2': #Esta validación también se puede realizar por una expresión regular
-                numbers.append('-1')
-
-            if str_aux == '+x1' or str_aux == '+x2':
-                numbers.append('1')
 
             if isnumber: #Si la cadena es un número ENTERO, lo guarda
                 numbers.append(str_aux)
 
     numbers = list(map(int, numbers)) #Transforma lista de caracteres a int
 
-    coeficientes = {'x1': numbers[0], 'x2': numbers[1]}
-    # Costos de restricciones
-    costosRes1 = {'x1': numbers[2], 'x2': numbers[3]}
-    costosRes2 = {'x1': numbers[5], 'x2': numbers[6]}
-    costosRes3 = {'x1': numbers[8], 'x2': numbers[9]}
-    costosRes4 = {'x1': numbers[11], 'x2': numbers[12]}
+    aux_coe = numbers[0]
+    
+    i = 1 #Contador
+    coeficientes = {}
+    for s in numbers[1 : aux_coe + 1]: #For para guardar los coeficientes
+        x = 'x'
+        aux = str(i)
+        x = 'x' + aux
+        i = i + 1
+        coeficientes.update({x : s})
 
-    xs = ['x1', 'x2']
+    i = 1 #Contador
+    costosRes1 = {}
+    for s in numbers[aux_coe + 1 : -1]: #For para guardar las restricciones
+        x = 'x'
+        aux = str(i)
+        x = 'x' + aux
+        i = i + 1
+        costosRes1.update({x : s})
+
+    #print(numbers[-1])
+    #print(costosRes1)
+    #kk = input()
+    xs = []
+    for i in range(1, aux_coe + 1):
+        x = 'x'
+        aux = str(i)
+        x = 'x' + aux
+        xs.append(x)
+    #print(xs)
+    #kk = input()
+
     x_vars = LpVariable.dicts("v", xs, 0) # v_x1, v_x2
 
     problema += lpSum([coeficientes[i] * x_vars[i] for i in xs]), 'obj' # funcion objetivo
 
-    problema += lpSum([costosRes1[i] * x_vars[i] for i in xs]) <= numbers[4]
-    problema += lpSum([costosRes2[i] * x_vars[i] for i in xs]) <= numbers[7]
-    problema += lpSum([costosRes3[i] * x_vars[i] for i in xs]) <= numbers[10]
-    problema += lpSum([costosRes4[i] * x_vars[i] for i in xs]) <= numbers[13]
+    problema += lpSum([costosRes1[i] * x_vars[i] for i in xs]) <= numbers[-1]
 
     problema.solve()
 
