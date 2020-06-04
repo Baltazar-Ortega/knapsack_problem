@@ -12,18 +12,30 @@ import re
 arbol = Tree()
 mejor_nodo = {}
 
-def input():
-    archivo = open("inputGrande.txt", "r") #Abrir el archivo para leer
-    num_format = re.compile("^[\-]?[1-9]") #Expresión regular para encontrar números enteros.
-    lines = [] #Lista para guardar renglones de archivo
+def ingresarDatos():
 
-    numeros = [] #Lista de coeficientes y costos
+    nombre_archivo = input("Nombre del archivo con los datos: ")
     
-    #Leer por renglon en el archivo
-    for line in archivo:
-        lines.append(line)
+    try:
+        
+        archivo = open(nombre_archivo, "r") #Abrir el archivo para leer
+        
+        num_format = re.compile("^[\-]?[1-9]") #Expresión regular para encontrar números enteros.
+        lines = [] #Lista para guardar renglones de archivo
 
-    archivo.close() 
+        numeros = [] #Lista de coeficientes y costos
+        
+        #Leer por renglon en el archivo
+        for line in archivo:
+            lines.append(line)
+
+        archivo.close() 
+    except OSError:
+        print("No existe el archivo \n")
+        sys.exit()
+
+
+    
 
     #Función para encontrar números en cada elemento de la lista
 
@@ -73,7 +85,7 @@ def proceso():
 
     problema = LpProblem("PIA", LpMaximize)
 
-    numeros, beneficios, pesos, xs = input()
+    numeros, beneficios, pesos, xs = ingresarDatos()
 
     x_vars = LpVariable.dicts("v", xs, 0) # v_x1, v_x2
     
@@ -356,7 +368,10 @@ def resultado():
 
 
 if __name__ == '__main__':
-    input()
+
+    print("\n PIA \n Equipo: \n Baltazar")
+
+    ingresarDatos()
     proceso()
     resultado()
     
