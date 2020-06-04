@@ -1,5 +1,5 @@
 #Las condiciones para que tome los valores del txt correctamente son:
-#1. Los coeficientes de las variables tienen que ir separadas con un espacio.
+#1. Los beneficios de las variables tienen que ir separadas con un espacio.
 #2. Si el coeficiente es un 1, no dejar espacios en blanco.
 #3. Si el coeficiente es negativo, dejar el signo junto al coeficiente sin pasar espacio.
 
@@ -13,7 +13,7 @@ arbol = Tree()
 mejor_nodo = {}
 
 def input():
-    archivo = open("input.txt", "r") #Abrir el archivo para leer
+    archivo = open("inputGrande.txt", "r") #Abrir el archivo para leer
     num_format = re.compile("^[\-]?[1-9]") #Expresión regular para encontrar números enteros.
     lines = [] #Lista para guardar renglones de archivo
 
@@ -37,20 +37,20 @@ def input():
 
     numeros = list(map(int, numeros)) #Transforma lista de caracteres a int
 
-    aux_coe = numeros[0] #Toma el valor para saber cuantas variables tiene el problema
+    aux_coeficientes = numeros[0] #Toma el valor para saber cuantas variables tiene el problema
     
     i = 1 #Contador
-    coeficientes = {}
-    for s in numeros[1 : aux_coe + 1]: #For para guardar los coeficientes
+    beneficios = {}
+    for s in numeros[1 : aux_coeficientes + 1]: #For para guardar los coeficientes
         x = 'x'
         aux = str(i)
         x = 'x' + aux
         i = i + 1
-        coeficientes.update({x : s})
+        beneficios.update({x : s})
 
     i = 1 #Contador
     pesos = {}
-    for s in numeros[aux_coe + 1 : -1]: #For para guardar las restricciones
+    for s in numeros[aux_coeficientes + 1 : -1]: #For para guardar las restricciones
         x = 'x'
         aux = str(i)
         x = 'x' + aux
@@ -58,13 +58,13 @@ def input():
         pesos.update({x : s})
 
     xs = []
-    for i in range(1, aux_coe + 1): #For para guardar las xs
+    for i in range(1, aux_coeficientes + 1): #For para guardar las xs
         x = 'x'
         aux = str(i)
         x = 'x' + aux
         xs.append(x)
 
-    return numeros, coeficientes, pesos, xs
+    return numeros, beneficios, pesos, xs
 
 
 
@@ -73,12 +73,12 @@ def proceso():
 
     problema = LpProblem("PIA", LpMaximize)
 
-    numeros, coeficientes, pesos, xs = input()
+    numeros, beneficios, pesos, xs = input()
 
     x_vars = LpVariable.dicts("v", xs, 0) # v_x1, v_x2
     
 
-    problema += lpSum([coeficientes[i] * x_vars[i] for i in xs]), 'obj' # funcion objetivo
+    problema += lpSum([beneficios[i] * x_vars[i] for i in xs]), 'obj' # funcion objetivo
 
     problema += lpSum([pesos[i] * x_vars[i] for i in xs]) <= numeros[-1]
 
