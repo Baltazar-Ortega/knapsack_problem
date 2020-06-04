@@ -1,10 +1,22 @@
+#Las condiciones para que tome los valores del txt correctamente son:
+#1. Los coeficientes de las variables tienen que ir separadas con un espacio.
+#2. Si el coeficiente es un 1, no dejar espacios en blanco.
+#3. Si el coeficiente es negativo, dejar el signo junto al coeficiente sin pasar espacio.
+
 from pulp import *
 from treelib import Node, Tree
 import math
 import random
+import re
+
 arbol = Tree()
 mejor_nodo = {}
+archivo = open("data2.txt", "r") #Abrir el archivo para leer
+num_format = re.compile("^[\-]?[1-9]") #Expresión regular para encontrar números enteros.
+lines = [] #Lista para guardar renglones de archivo
+
 def resultado():
+    o=0
     print(arbol.show())
 
     nodos_ordenados_indices = [0] # el original es 0
@@ -24,41 +36,87 @@ def resultado():
 
     for i, nodo in enumerate(nodos_ordenados):
         if i == 0:
+            print("\n\n~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
             print("\n\n\t Problema original \n\n")
+            print("~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
         else:
+            print("\n\n~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
             print("\n\n\t Subproblema ", i, " \n\n")
+            print("~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
         print(nodo)
+        print("~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
 
+    for o,nodo in enumerate(nodos_ordenados):
+        if nodo.data['resultado']['obj'] == mejor_nodo['z']:
+            num=o
     # print("Nodos ordenados: ", nodos_ordenados)
 
+    print("\n\n----------------------------------")
     print("\n\n\t Solucion óptima: \n")
+    print("\n\t Subproblema ", num,)
+    print("----------------------------------")
     print("\n z* = ", int(mejor_nodo['z']))
     print("\n x1 = ", int(mejor_nodo['resultado']['v_x1']))
     print("\n x1 = ", int(mejor_nodo['resultado']['v_x2']))
-    
+    print("----------------------------------")    
 
 def main():
     tipo = 'LpMaximize'
+    numbers = [] #Lista de coeficientes y costos
 
     problema = LpProblem("Ej2_Branch_and_Bound", LpMaximize)
+    
+    #Leer por renglon en el archivo
+    for line in archivo:
+        lines.append(line)
 
-    coeficientes = {'x1': 2, 'x2': 3}
-    # Costos de restricciones
-    costosRes1 = {'x1': -3, 'x2': 1}
-    costosRes2 = {'x1': 4, 'x2': 2}
-    costosRes3 = {'x1': 4, 'x2': -1}
-    costosRes4 = {'x1': -1, 'x2': 2}
+    archivo.close() 
 
-    xs = ['x1', 'x2']
+    #Función para encontrar números en cada elemento de la lista
+
+    for s in lines:
+        for str_aux in s.split(): #Separa las cadenas por espacios
+
+            isnumber = re.match(num_format, str_aux) #Devuelve un booleano si el número cumple con la expresión regular
+
+            if isnumber: #Si la cadena es un número ENTERO, lo guarda
+                numbers.append(str_aux)
+
+    numbers = list(map(int, numbers)) #Transforma lista de caracteres a int
+
+    aux_coe = numbers[0] #Toma el valor para saber cuantas variables tiene el problema
+    
+    i = 1 #Contador
+    coeficientes = {}
+    for s in numbers[1 : aux_coe + 1]: #For para guardar los coeficientes
+        x = 'x'
+        aux = str(i)
+        x = 'x' + aux
+        i = i + 1
+        coeficientes.update({x : s})
+
+    i = 1 #Contador
+    costosRes1 = {}
+    for s in numbers[aux_coe + 1 : -1]: #For para guardar las restricciones
+        x = 'x'
+        aux = str(i)
+        x = 'x' + aux
+        i = i + 1
+        costosRes1.update({x : s})
+
+    xs = []
+    for i in range(1, aux_coe + 1): #For para guardar las xs
+        x = 'x'
+        aux = str(i)
+        x = 'x' + aux
+        xs.append(x)
+
     x_vars = LpVariable.dicts("v", xs, 0) # v_x1, v_x2
     print("x_vars: ", x_vars)
 
     problema += lpSum([coeficientes[i] * x_vars[i] for i in xs]), 'obj' # funcion objetivo
 
-    problema += lpSum([costosRes1[i] * x_vars[i] for i in xs]) <= 1
-    problema += lpSum([costosRes2[i] * x_vars[i] for i in xs]) <= 15
-    problema += lpSum([costosRes3[i] * x_vars[i] for i in xs]) <= 10
-    problema += lpSum([costosRes4[i] * x_vars[i] for i in xs]) <= 5
+    problema += lpSum([costosRes1[i] * x_vars[i] for i in xs]) <= numbers[-1]
 
     problema.solve()
 
@@ -101,14 +159,17 @@ def main():
             
     # print("Diccionario resultado: ", resultado)
     # print("Lista de variables no enteras: ", variables_no_enteras)
-
+    
     if solucion == True:
-        print('Automaticamente entero')
+        print('El problema es automaticamente entero, ya no es necesario realizar árbol de decisión.')
         mejor_nodo['nodo'] = 'original'
         mejor_nodo['z'] = value(problema.objective)
         mejor_nodo['resultado'] = resultado
-    else:  # Se realizará arbol de decision
-        # Agregamos el root a la lista de nodos
+        print("\nSolución optima:")
+        print("Z*=", resultado["obj"])
+        print("X*=(",resultado["Xs_x1"],resultado["Xs_x2"],")")
+    else: # Agregamos el root a la lista de nodos
+        print("Se realizará árbol de decisión, ya que no es entero")
         pila_nodos.append('original')
 
     # NODO RAIZ del arbol de decision
