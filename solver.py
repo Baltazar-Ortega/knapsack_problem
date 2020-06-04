@@ -297,7 +297,6 @@ def proceso():
 
 
 def resultado():
-    o = 0
 
     nodos_ordenados_indices = [0] # el original es 0
     nodos_ordenados = []
@@ -317,13 +316,26 @@ def resultado():
     for i, nodo in enumerate(nodos_ordenados):
         if i == 0:
             print("\n\n~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
-            print("\n\n\t Problema original \n\n")
+            print("\n\n\t Problema original \n")
             print("~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
         else:
             print("\n\n~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
-            print("\n\n\t Subproblema ", i, " \n\n")
+            print("\n\n\t Subproblema ", i, " \n")
             print("~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
-        print(nodo)
+        if i!= 0:
+            print("\tNodo: ",nodo.tag,"\t\tRestriccion que se agrego:",nodo.data.get('nueva_restriccion'))
+            print("..................................................................................................")
+        print("\n",nodo.data['problema'])
+        print("..................................................................................................")
+        print("Variables no enteras: ",nodo.data['no_enteros'])
+        if nodo.data['resultado']['obj']=='Infeasible':
+                print("Es Infactible")
+        else:
+            print("z: ",nodo.data['resultado']['obj'])
+            for o,p in enumerate(nodo.data['resultado']['vars']):
+                print("v_x",end="")
+                print(o+1,"= ",float(nodo.data['resultado'][p]))
+        #print(nodo)
         print("~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
 
     for o,nodo in enumerate(nodos_ordenados):
