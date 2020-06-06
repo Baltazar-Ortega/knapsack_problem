@@ -129,9 +129,8 @@ def proceso():
         print("\n Solución optima: ")
         print("Z* = ", resultado["obj"])
 
-        # Corregir Rodolfo
-
-        print("X* = (",resultado["Xs_x1"],resultado["Xs_x2"],")")
+        for i, variable in enumerate(mejor_nodo['resultado']['vars'].keys()):
+            print("\n v_x{num} = ".format(num=i+1), int(mejor_nodo['resultado'][variable]))
 
     else: # Agregamos el root a la lista de nodos
         print("\n Se realizará árbol de decisión, ya que no hay variables no enteras \n")
