@@ -13,7 +13,7 @@ arbol = Tree()
 
 def ingresarDatos():
 
-    nombre_archivo = ("inputGrande.txt")
+    nombre_archivo = ("inputMini.txt")
     
      # Abrir el archivo a leer
     archivo = open(nombre_archivo, "r")
@@ -148,7 +148,7 @@ def proceso():
                         'resultado': resultado
                     })
     
-    p = 1 # Contador de problemas
+    p = 1 # Contador de subproblemas
 
     # **************** BRANCH AND BOUND *************
 
@@ -157,7 +157,7 @@ def proceso():
         # Para cada nodo creamos otros 2 nodos, con sus nuevas restricciones
 
         # FIFO. Para hacer el branching seleccionamos el ultimo nodo insertado en la pila
-        nodo_ramificar = pila_nodos[0] 
+        nodo_ramificar = pila_nodos[-1] 
 
         # Lo removemos de la pila para que sea examinado
         pila_nodos.remove(nodo_ramificar) 
@@ -181,7 +181,7 @@ def proceso():
         # Añadir nueva restriccion
         nodo += x_vars[x_elegida] <= piso
 
-        nueva_restriccion = '{x}<={piso}'.format(x=x_vars[x_elegida], piso=piso)
+        nueva_restriccion = '{x} <= {piso}'.format(x=x_vars[x_elegida], piso=piso)
 
         nodo.solve()
 
@@ -196,7 +196,7 @@ def proceso():
 
         nodo += x_vars[x_elegida] >= techo
 
-        nueva_restriccion = '{x}>={bs}'.format(x = x_vars[x_elegida], bs = techo)
+        nueva_restriccion = '{x} >= {bs}'.format(x = x_vars[x_elegida], bs = techo)
 
         nodo.solve()
 
@@ -238,7 +238,7 @@ def evaluarNodo(nodo, p, mejor_nodo, nodo_ramificar, nueva_restriccion, pila_nod
                         
             else: # Todas las variables son enteras (una hoja)
                 if resultado['obj'] > mejor_nodo['z']:
-                        mejor_nodo['node'] = 'node{no}'.format(no=p)
+                        mejor_nodo['nodo'] = 'node{no}'.format(no=p)
                         mejor_nodo['z'] = resultado['obj']
                         mejor_nodo['resultado'] = resultado
                     
@@ -278,7 +278,9 @@ def mostrarResultado(mejor_nodo):
 
     # Se recorre el arbol en PREORDEN (root, izquierda, derecha)
     for nombre in list(arbol.expand_tree(mode=Tree.DEPTH))[1:]:
-         nodos_ordenados_indices.append(int(nombre[4]))
+        num_nodo_str = re.search("\d+", nombre)
+        num_nodo = int(num_nodo_str.group(0))
+        nodos_ordenados_indices.append(num_nodo)
 
 
     for i in nodos_ordenados_indices:
@@ -310,7 +312,7 @@ def mostrarResultado(mejor_nodo):
         else:
             print("z: ",nodo.data['resultado']['obj'])
             for j, variable in enumerate(nodo.data['resultado']['vars']):
-                print("v_x",end="")
+                print("v_x", end="")
                 print(j + 1," = ",float(nodo.data['resultado'][variable]))
         #print(nodo)
         print("~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
