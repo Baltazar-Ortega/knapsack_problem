@@ -1,7 +1,9 @@
 #Las condiciones para que tome los valores del txt correctamente son:
 #1. Los beneficios de las variables tienen que ir separadas con un espacio.
-#2. Si el coeficiente es un 1, no dejar espacios en blanco.
-#3. Si el coeficiente es negativo, dejar el signo junto al coeficiente sin pasar espacio.
+#2. La primera línea debe de ser el número de variables.
+#3. En la segunda línea deben de ir los coeficientes de la función objetivo.
+#4. En la tercera línea deben de ir los coeficientes de la restricción.
+#5. La cuarta línea es el lado derecho de la restricción.
 
 from pulp import *
 from treelib import Node, Tree
@@ -25,7 +27,7 @@ def ingresarDatos():
     # Lista de coeficientes y costos
     numeros = [] 
         
-    # Leyendo el archivo por renglon
+    # Leyendo el archivo por renglón
     for line in archivo:
         lineas.append(line)
 
@@ -84,13 +86,13 @@ def proceso():
     # variable continuas 
     x_vars = LpVariable.dicts("v", xs, 0) # v_x1, v_x2
     
-    # funcion objetivo
+    # función objetivo
     problema += lpSum([beneficios[i] * x_vars[i] for i in xs]), 'funcion_objetivo' 
 
-    # Restriccion del limite de la mochila
+    # Restricción del límite de la mochila
     problema += lpSum([pesos[i] * x_vars[i] for i in xs]) <= numeros[-1]
 
-    # Obtener solucion del problema original
+    # Obtener solución del problema original
     problema.solve()
 
     # Nombres de los nodos (array de strings) con variables no enteras
@@ -121,7 +123,7 @@ def proceso():
             
     
     if solucion == True:
-        print('\n El problema es automaticamente entero, ya no es necesario realizar árbol de decisión. \n')
+        print('\n El problema es automáticamente entero, ya no es necesario realizar árbol de decisión. \n')
         mejor_nodo['nodo'] = 'original'
         mejor_nodo['z'] = value(problema.objective)
         mejor_nodo['resultado'] = resultado
@@ -137,7 +139,7 @@ def proceso():
         pila_nodos.append('original')
 
     # NODO RAIZ del arbol de decision
-    # Parametros
+    # Parámetros
     # El primero es un nombre para cuando se imprima, el segundo es un identificador,
     # el tercer parametro son los datos que guardará
     arbol.create_node('Original', 'original',
@@ -156,7 +158,7 @@ def proceso():
         
         # Para cada nodo creamos otros 2 nodos, con sus nuevas restricciones
 
-        # FIFO. Para hacer el branching seleccionamos el ultimo nodo insertado en la pila
+        # FIFO. Para hacer el branching seleccionamos el último nodo insertado en la pila
         nodo_ramificar = pila_nodos[-1] 
 
         # Lo removemos de la pila para que sea examinado
@@ -171,14 +173,14 @@ def proceso():
 
         techo = math.ceil(arbol.get_node('{nodo}'.format(nodo=nodo_ramificar)).data['resultado'][variable_ramificar])
 
-        # Copiar el nodo, porque le vamos a añadir una restriccion
+        # Copiar el nodo, porque le vamos a añadir una restricción
         nodo = arbol.get_node('{nodo}'.format(nodo=nodo_ramificar)).data['problema'].copy()
 
         x_elegida = xs[int(variable_ramificar.split('_')[1][1]) - 1] 
 
         ###### IZQUIERDA ######
 
-        # Añadir nueva restriccion
+        # Añadir nueva restricción
         nodo += x_vars[x_elegida] <= piso
 
         nueva_restriccion = '{x} <= {piso}'.format(x=x_vars[x_elegida], piso=piso)
@@ -191,7 +193,7 @@ def proceso():
 
         ###### DERECHA ######
 
-        # Copiar el original, porque le vamos a añadir una restriccion
+        # Copiar el original, porque le vamos a añadir una restricción
         nodo = arbol.get_node('{nodo}'.format(nodo=nodo_ramificar)).data['problema'].copy()
 
         nodo += x_vars[x_elegida] >= techo
@@ -230,7 +232,7 @@ def evaluarNodo(nodo, p, mejor_nodo, nodo_ramificar, nueva_restriccion, pila_nod
             
             if solution == False: # Hay una variable NO entera. Habrá que ramificar
                     
-                    if mejor_nodo['nodo'] == 'none': # Primer caso. Aun no tenemos una solucion
+                    if mejor_nodo['nodo'] == 'none': # Primer caso. Aun no tenemos una solución
                         pila_nodos.append('node{no}'.format(no = p))
                     else: 
                         if resultado['obj'] > mejor_nodo['z']:
@@ -242,7 +244,7 @@ def evaluarNodo(nodo, p, mejor_nodo, nodo_ramificar, nueva_restriccion, pila_nod
                         mejor_nodo['z'] = resultado['obj']
                         mejor_nodo['resultado'] = resultado
                     
-            # Agregar nodo al arbol
+            # Agregar nodo al árbol
             arbol.create_node('node{no}'.format(no=p), 'node{no}'.format(no=p), 
                             parent='{node}'.format(node=nodo_ramificar),
                             data={
@@ -255,7 +257,7 @@ def evaluarNodo(nodo, p, mejor_nodo, nodo_ramificar, nueva_restriccion, pila_nod
             
         else: # El status NO es optimal
 
-            # Agregar nodo al arbol
+            # Agregar nodo al árbol
             arbol.create_node('node{no}'.format(no=p), 'node{no}'.format(no=p), 
                             parent='{node}'.format(node=nodo_ramificar),
                             data={
@@ -276,7 +278,7 @@ def mostrarResultado(mejor_nodo):
     nodos_ordenados_indices = [0] # el original es 0
     nodos_ordenados = []
 
-    # Se recorre el arbol en PREORDEN (root, izquierda, derecha)
+    # Se recorre el árbol en PREORDEN (root, izquierda, derecha)
     for nombre in list(arbol.expand_tree(mode=Tree.DEPTH))[1:]:
         num_nodo_str = re.search("\d+", nombre)
         num_nodo = int(num_nodo_str.group(0))
@@ -300,7 +302,7 @@ def mostrarResultado(mejor_nodo):
             print("~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
         
         if i !=  0:
-            print("\n\t\tRestriccion que se agrego: ", nodo.data.get('nueva_restriccion'))
+            print("\n\t\tRestricción que se agrego: ", nodo.data.get('nueva_restriccion'))
             print("..................................................................................................")
         
         print("\n", nodo.data['problema'])
@@ -317,13 +319,13 @@ def mostrarResultado(mejor_nodo):
         #print(nodo)
         print("~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
 
-    # Encontrar el subproblema optimo
+    # Encontrar el subproblema óptimo
     for j, nodo in enumerate(nodos_ordenados):
         if nodo.data['resultado']['obj'] == mejor_nodo['z']:
             num_subproblema_optimo = j
 
     print("\n\n----------------------------------")
-    print("\n\n\t Solucion óptima: \n")
+    print("\n\n\t Solución óptima: \n")
     print("\n\t Subproblema ", num_subproblema_optimo)
     print("----------------------------------")
     print("\n z* = ", int(mejor_nodo['z']))
@@ -336,7 +338,7 @@ def mostrarResultado(mejor_nodo):
 
 def presentacion():
     print("\n\n~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~~o~")
-    print("\n\t PIA - Investigacion de Operaciones \n Equipo: \n Leonardo Cardenas Torres - 1818209 \n Rodolfo Rivera Monjaras - 1813838 \n Natalia Alejandra Franco Ortega - 1887865 ")
+    print("\n\t PIA - Investigación de Operaciones \n Equipo: \n Leonardo Cardenas Torres - 1818209 \n Rodolfo Rivera Monjaras - 1813838 \n Natalia Alejandra Franco Ortega - 1887865 ")
     print(" Maria del Consuelo Meza Cano - 1746075 \n Alberto Baltazar Gutierrez Ortega - 1887970 \n")
     print("..................................................................................................\n\n")
 
