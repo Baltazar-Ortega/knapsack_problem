@@ -17,7 +17,7 @@ arbol = Tree()
 
 def ingresarDatos():
 
-    nombre_archivo = ("inputGrande.txt")
+    nombre_archivo = ("Equipo4_datos.txt")
     
      # Abrir el archivo a leer
     archivo = open(nombre_archivo, "r")
